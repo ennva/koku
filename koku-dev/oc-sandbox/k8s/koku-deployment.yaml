@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: koku
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: koku
+  template:
+    metadata:
+      labels:
+        app: koku
+    spec:
+      containers:
+        - name: koku
+          image: quay.io/faceennva/koku-api:0.0.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_ENGINE
+              value: django.db.backends.postgresql_psycopg2
+            - name: DATABASE_NAME
+              value: koku
+            - name: DATABASE_USER
+              value: koku
+            - name: DATABASE_PASSWORD
+              value: koku
+            - name: DATABASE_HOST
+              value: postgresql
+            - name: DATABASE_PORT
+              value: "5432"
+          ports:
+            - containerPort: 8000
+      # Uncomment if your image is private
+      imagePullSecrets:
+        - name: faceennva-pull-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: koku
+spec:
+  selector:
+    app: koku
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000

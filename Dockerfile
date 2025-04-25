@@ -69,7 +69,7 @@ ENV \
     # Add the koku virtual env bin to the front of PATH.
     # This activates the virtual env for all subsequent python calls.
     PATH="$VIRTUAL_ENV/bin:$PATH" \
-    PROMETHEUS_MULTIPROC_DIR=/tmp
+    PROMETHEUS_MULTIPROC_DIR=/opt/koku/prometheus_tmp
 
 # copy the src files into the workdir
 COPY . .
@@ -78,7 +78,7 @@ RUN mv licenses/ /
 # create the koku user
 RUN \
     adduser koku -u ${USER_ID} -g 0 && \
-    chmod ug+rw ${APP_ROOT} ${APP_HOME} ${APP_HOME}/static /tmp
+    chmod ug+rw ${APP_ROOT} ${APP_HOME} ${APP_HOME}/static ${PROMETHEUS_MULTIPROC_DIR}
 USER koku
 
 # create the static files

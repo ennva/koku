@@ -1,0 +1,88 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-cluster-{{ .Release.Name }}
+  namespace: "{{ .Release.Namespace }}"
+  annotations:
+    checkov.io/skip-ckv-k8s-38: CKV_K8S_38=The hypershift image requires a service account token
+    checkov.io/skip-ckv-k8s-40: CKV_K8S_40=RunAsUser should not be set when using the anyuid SCC on OpenShift
+    checkov.io/skip-ckv2-k8s-6: CKV2_K8S_6=NetworkPolicies should be created by namespace admins
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      name: create-cluster-{{ .Release.Name }}
+    spec:
+      serviceAccountName: "{{ .Values.serviceAccount }}"
+      restartPolicy: Never
+      {{- include "pod-security-context" . | nindent 6 }}
+      volumes:
+        {{- include "credential-volumes" . | nindent 8 }}
+        - name: config
+          configMap:
+            name: config-{{ .Release.Name }}
+      initContainers:
+        {{- include "aws-sts-init-container" . | nindent 8 }}
+      containers:
+        - name: hypershift
+          image: "{{ .Values.hypershiftImage }}"
+          {{- include "container-resources" . | nindent 10 }}
+          {{- include "container-security-context" . | nindent 10 }}
+          volumeMounts:
+            - name: sts
+              mountPath: /opt/hypershift/sts
+            - name: secret
+              mountPath: /opt/hypershift/secret
+            - name: config
+              mountPath: /opt/hypershift/config
+          command:
+            - hypershift
+          args:
+            - create
+            - cluster
+            - aws
+            - --name
+            - "{{ .Release.Name }}"
+            - --infra-id
+            - "{{ .Release.Name | trunc -12 }}"
+            - --namespace
+            - "{{ .Release.Namespace }}"
+            - --sts-creds
+            - /opt/hypershift/sts/token.json
+            - --role-arn
+            - "{{ .Values.hypershiftRoleArn }}"
+            - --pull-secret
+            - /opt/hypershift/secret/pull-secret
+            - --image-content-sources
+            - /opt/hypershift/config/image-content-sources.yaml
+            - --base-domain
+            - "{{ .Values.baseDomain }}"
+            - --region
+            - "{{ .Values.region }}"
+            - --multi-arch
+            - --arch
+            {{- if hasPrefix "m6g." .Values.instanceType }}
+            - arm64
+            {{- else }}
+            - amd64
+            {{- end }}
+            - --instance-type
+            - "{{ .Values.instanceType }}"
+            - --node-pool-replicas
+            - "{{ .Values.nodePoolReplicas }}"
+            - --release-image
+            - quay.io/openshift-release-dev/ocp-release:{{ .Values.version }}-multi
+            - --control-plane-availability-policy
+            - SingleReplica
+            - --infra-availability-policy
+            - SingleReplica
+            - --annotations
+            - argocd.argoproj.io/tracking-id={{ .Release.Name }}:hypershift.openshift.io/HostedCluster:{{ .Release.Namespace }}/{{ .Release.Name }}
+            - --annotations
+            - argocd.argoproj.io/compare-options=IgnoreExtraneous
+            - --annotations
+            - argocd.argoproj.io/sync-options=Prune=false,Delete=false
+            - --timeout
+            - "{{ .Values.timeout }}"
+            - --wait
