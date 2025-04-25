@@ -71,14 +71,17 @@ ENV \
     PATH="$VIRTUAL_ENV/bin:$PATH" \
     PROMETHEUS_MULTIPROC_DIR=/opt/koku/prometheus_tmp
 
-# copy the src files into the workdir
-COPY . .
-RUN mv licenses/ /
+# Create a dedicated Prometheus dir before switching users
+RUN \
+    mv licenses/ / && \
+    mkdir -p ${PROMETHEUS_MULTIPROC_DIR} && \
+    chmod 777 ${PROMETHEUS_MULTIPROC_DIR}
 
 # create the koku user
 RUN \
     adduser koku -u ${USER_ID} -g 0 && \
     chmod ug+rw ${APP_ROOT} ${APP_HOME} ${APP_HOME}/static ${PROMETHEUS_MULTIPROC_DIR}
+    
 USER koku
 
 # create the static files
