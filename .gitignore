@@ -144,6 +144,12 @@ certs/
 dev/*.yaml
 dev/*.yml
 
+# credentials
+dev/credentials/aws
+dev/credentials/gcp
+dev/credentials/oci
+dev/credentials/az
+
 # unleash cache
 .unleash/cache/
 dev/containers/unleash/cache/

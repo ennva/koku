@@ -1,8 +1,9 @@
 name: Build and Push to Quay.io
 
 on:
-  push:
-    branches: [ main ]
+  workflow_call:
+#  push:
+#    branches: [ main ]
 
 jobs:
   build:
@@ -16,7 +17,7 @@ jobs:
         run: echo "${{ secrets.QUAY_PASSWORD }}" | docker login quay.io -u "${{ secrets.QUAY_USERNAME }}" --password-stdin
 
       - name: Build Docker image
-        run: docker build -t quay.io/${{ secrets.QUAY_USERNAME }}/koku-dev:latest .
+        run: docker build -t quay.io/${{ secrets.QUAY_USERNAME }}/koku:latest .
 
       - name: Push to Quay.io
-        run: docker push quay.io/${{ secrets.QUAY_USERNAME }}/koku-dev:latest
+        run: docker push quay.io/${{ secrets.QUAY_USERNAME }}/koku:latest

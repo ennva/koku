@@ -1,60 +1,62 @@
-# name: Create Pre-Release
+name: Create Pre-Release
 
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       commit:
-#         description: 'Release commit'
-#         required: true
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Release commit'
+        required: true
 
-# permissions:
-#   contents: write
+permissions:
+  contents: write
 
-# jobs:
-#   pre-release:
-#     name: Pre-release
-#     runs-on: ubuntu-latest
+jobs:
+  pre-release:
+    name: Pre-release
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Harden Runner
-#         uses: step-security/harden-runner@c6295a65d1254861815972266d5933fd6e532bdf # v2.11.1
-#         with:
-#           egress-policy: audit
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@c6295a65d1254861815972266d5933fd6e532bdf # v2.11.1
+        with:
+          egress-policy: audit
 
-#       - name: Checkout
-#         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-#         with:
-#           fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
 
-#       - name: Determine minor version
-#         id: tag-setter
-#         run: |
-#           DATE=$(date +"%Y.%m.%d")
-#           PREV_RELEASE=$(git tag --list | tail -1)
-#           PREV_DATE="${PREV_RELEASE%.*}"
-#           MINOR_VERSION=0
-#           case $PREV_DATE in
-#             *"$DATE"*)
-#               MINOR_VERSION=${PREV_RELEASE##*.}
-#               MINOR_VERSION=$((MINOR_VERSION+1))
-#               ;;
-#             *)
-#               MINOR_VERSION=0
-#               ;;
-#           esac
-#           echo "TAG_VERSION=r.$DATE.$MINOR_VERSION" >> $GITHUB_ENV
+      - name: Determine minor version
+        id: tag-setter
+        run: |
+          DATE=$(date +"%Y.%m.%d")
+          PREV_RELEASE=$(git tag --list | tail -1)
+          PREV_DATE="${PREV_RELEASE%.*}"
+          MINOR_VERSION=0
+          case $PREV_DATE in
+            *"$DATE"*)
+              MINOR_VERSION=${PREV_RELEASE##*.}
+              MINOR_VERSION=$((MINOR_VERSION+1))
+              ;;
+            *)
+              MINOR_VERSION=0
+              ;;
+          esac
+          echo "TAG_VERSION=r.$DATE.$MINOR_VERSION" >> $GITHUB_ENV
 
-#       - name: Set the release commit
-#         run: echo "RELEASE_COMMIT=${{ github.event.inputs.commit }}" >> $GITHUB_ENV
+      - name: Set the release commit
+        run: echo "RELEASE_COMMIT=${{ github.event.inputs.commit }}" >> $GITHUB_ENV
 
-#       - name: Create release body file
-#         run: bash .github/scripts/get_description.sh
+      - name: Create release body file
+        run: bash .github/scripts/get_description.sh
 
-#       - name: Set release body
-#         uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
-#         with:
-#           bodyFile: release_body.md
-#           commit: ${{ github.event.inputs.commit }}
-#           prerelease: true
-#           tag: ${{ env.TAG_VERSION }}
-#           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set release body
+        uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
+        with:
+          bodyFile: release_body.md
+          commit: ${{ github.event.inputs.commit }}
+          prerelease: true
+          tag: ${{ env.TAG_VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+  call-workflow-build-and-push:
+    uses: ./.github/workflows/build-and-push.yml
