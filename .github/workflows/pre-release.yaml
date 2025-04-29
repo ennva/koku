@@ -42,7 +42,7 @@ jobs:
               MINOR_VERSION=0
               ;;
           esac
-          echo "TAG_VERSION=r.$DATE.$MINOR_VERSION" >> $GITHUB_ENV
+          echo "TAG_VERSION=v.$DATE.$MINOR_VERSION" >> $GITHUB_ENV
 
       - name: Set the release commit
         run: echo "RELEASE_COMMIT=${{ github.event.inputs.commit }}" >> $GITHUB_ENV
@@ -58,5 +58,7 @@ jobs:
           prerelease: true
           tag: ${{ env.TAG_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          makeLatest: legacy
+          generateReleaseNotes: false
   call-workflow-build-and-push:
     uses: ./.github/workflows/build-and-push.yml # set artifact later to pass TAG to buil-push workflow
