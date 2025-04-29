@@ -292,3 +292,11 @@ There is a stored procedure that helps create table partitions on-the-fly during
 ## Contributing
 
 Please refer to [Contributing](https://github.com/project-koku/koku/blob/main/CONTRIBUTING.md).
+
+---
+## Build and Push Docker Images
+### **Github**
+Following are secrets needed to set your CI/CD pipeline
+1. CODECOV_TOKEN
+2. QUAY_PASSWORD
+3. QUAY_USERNAME
