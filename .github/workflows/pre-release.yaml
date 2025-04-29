@@ -59,4 +59,4 @@ jobs:
           tag: ${{ env.TAG_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
   call-workflow-build-and-push:
-    uses: ./.github/workflows/build-and-push.yml
+    uses: ./.github/workflows/build-and-push.yml # set artifact later to pass TAG to buil-push workflow
