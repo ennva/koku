@@ -62,6 +62,10 @@ jobs:
           generateReleaseNotes: false
   call-workflow-build-and-push:
     uses: ./.github/workflows/build-and-push.yml # set artifact later to pass TAG to buil-push workflow
+    with:
+      docker_namespace: quay.io
+      base_image_name: koku_base
+      db_image_name: koku_db
     secrets:
       docker_username: ${{ secrets.QUAY_USERNAME }}
       docker_password: ${{ secrets.QUAY_PASSWORD }}

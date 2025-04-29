@@ -7,22 +7,24 @@ on:
         required: true
       docker_password:
         required: true
-    paths:
-      - Dockerfile
-      - dev/containers/postgresql/**
-      - .github/workflows/docker-build-push.yml
-      - '**/*.sh'
-      - koku/**
+    inputs:
+      docker_namespace:
+        required: true
+        type: string
+      base_image_name:
+        required: false
+        type: string
+        default: koku_base
+      db_image_name:
+        required: false
+        type: string
+        default: koku-db
 #  push:
 #    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      IMAGE_NAMESPACE: quay.io  # change this!
-      BASE_IMAGE_NAME: koku_base
-      DB_IMAGE_NAME: koku_db
 
     steps:
       - name: Checkout Code
@@ -40,7 +42,7 @@ jobs:
           context: .
           file: ./Dockerfile  # adjust if your Dockerfile has another name/path
           push: true
-          tags: ${{ env.IMAGE_NAMESPACE }}/${{ env.BASE_IMAGE_NAME }}:latest
+          tags: ${{ inputs.docker_namespace }}/${{ inputs.base_image_name }}:latest
 
       - name: Build and push koku-db
         uses: docker/build-push-action@v5
@@ -48,7 +50,7 @@ jobs:
           context: ./dev/containers/postgresql
           file: ./dev/containers/postgresql/Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAMESPACE }}/${{ env.DB_IMAGE_NAME }}:latest
+          tags: ${{ inputs.docker_namespace }}/${{ inputs.db_image_name }}:latest
 
       #- name: Build Docker image for
       #  run: docker build -t quay.io/${{ secrets.docker_username }}/koku_base:latest .
