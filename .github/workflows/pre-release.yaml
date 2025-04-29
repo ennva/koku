@@ -62,3 +62,6 @@ jobs:
           generateReleaseNotes: false
   call-workflow-build-and-push:
     uses: ./.github/workflows/build-and-push.yml # set artifact later to pass TAG to buil-push workflow
+    secrets:
+      docker_username: ${{ secrets.QUAY_USERNAME }}
+      docker_password: ${{ secrets.QUAY_PASSWORD }}

@@ -300,3 +300,4 @@ Following are secrets needed to set your CI/CD pipeline
 1. CODECOV_TOKEN
 2. QUAY_PASSWORD
 3. QUAY_USERNAME
+    - From quay.io -> Account Settings -> Generated encrypted password
