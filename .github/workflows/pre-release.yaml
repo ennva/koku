@@ -63,7 +63,7 @@ jobs:
   call-workflow-build-and-push:
     uses: ./.github/workflows/build-and-push.yml # set artifact later to pass TAG to buil-push workflow
     with:
-      docker_namespace: quay.io/${{ secrets.QUAY_USERNAME }}
+      docker_namespace: quay.io
     secrets:
       docker_username: ${{ secrets.QUAY_USERNAME }}
       docker_password: ${{ secrets.QUAY_PASSWORD }}

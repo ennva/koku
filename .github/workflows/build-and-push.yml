@@ -42,7 +42,7 @@ jobs:
           context: .
           file: ./Dockerfile  # adjust if your Dockerfile has another name/path
           push: true
-          tags: ${{ inputs.docker_namespace }}/${{ inputs.base_image_name }}:latest
+          tags: ${{ inputs.docker_namespace }}/${{ secrets.docker_username }}/${{ inputs.base_image_name }}:latest
 
       - name: Build and push koku-db
         uses: docker/build-push-action@v5
@@ -50,7 +50,7 @@ jobs:
           context: ./dev/containers/postgresql
           file: ./dev/containers/postgresql/Dockerfile
           push: true
-          tags: ${{ inputs.docker_namespace }}/${{ inputs.db_image_name }}:latest
+          tags: ${{ inputs.docker_namespace }}/${{ secrets.docker_username }}/${{ inputs.db_image_name }}:latest
 
       #- name: Build Docker image for
       #  run: docker build -t quay.io/${{ secrets.docker_username }}/koku_base:latest .
