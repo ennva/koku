@@ -19,6 +19,10 @@ on:
         required: false
         type: string
         default: koku_db
+      pgadmin_image_name:
+        required: false
+        type: string
+        default: koku_pgadmin
 #  push:
 #    branches: [ main ]
 
@@ -52,6 +56,13 @@ jobs:
           push: true
           tags: ${{ inputs.docker_namespace }}/${{ secrets.docker_username }}/${{ inputs.db_image_name }}:latest
 
+      - name: Build and push pgadmin Openshift compatible
+        uses: docker/build-push-action@v5
+        with:
+          context: ./dev/containers/pgadmin
+          file: ./dev/containers/pgadmin/Dockerfile
+          push: true
+          tags: ${{ inputs.docker_namespace }}/${{ secrets.docker_username }}/${{ inputs.pgadmin_image_name }}:latest
       #- name: Build Docker image for
       #  run: docker build -t quay.io/${{ secrets.docker_username }}/koku_base:latest .
 
