@@ -7,6 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  IMAGE_USERNAME: ${{ github.actor }}
 
 jobs:
   build-and-push-image:
@@ -46,7 +47,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ matrix.image }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_USERNAME }}/${{ matrix.name }}
           tags: |
             type=semver,pattern={{version}}
 
