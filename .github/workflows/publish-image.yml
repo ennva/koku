@@ -11,6 +11,22 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./dev/containers/postgresql/Dockerfile
+            context: ./dev/containers/postgresql
+            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/koku-db
+          - dockerfile: ./dev/containers/pgadmin/Dockerfile
+            context: ./dev/containers/pgadmin
+            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/koku-pgadmin
+          - dockerfile: ./grafana/Dockerfile-grafana
+            context: ./grafana
+            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/koku-grafana
+          - dockerfile: ./Dockerfile
+            context: .
+            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/koku-base
     permissions:
       contents: read
       packages: write
@@ -30,14 +46,15 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ matrix.image }}
           tags: |
             type=semver,pattern={{version}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
