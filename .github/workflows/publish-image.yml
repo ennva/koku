@@ -15,18 +15,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: ./dev/containers/postgresql/Dockerfile
+          - name: koku-db
+            dockerfile: ./dev/containers/postgresql/Dockerfile
             context: ./dev/containers/postgresql
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/koku-db
-          - dockerfile: ./dev/containers/pgadmin/Dockerfile
+          - name: koku-pgadmin
+            dockerfile: ./dev/containers/pgadmin/Dockerfile
             context: ./dev/containers/pgadmin
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/koku-pgadmin
-          - dockerfile: ./grafana/Dockerfile-grafana
+          - name: koku-grafana
+            dockerfile: ./grafana/Dockerfile-grafana
             context: ./grafana
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/koku-grafana
-          - dockerfile: ./Dockerfile
+          - name: koku-base
+            dockerfile: ./Dockerfile
             context: .
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/koku-base
     permissions:
       contents: read
       packages: write
@@ -56,5 +56,5 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.name }}
           labels: ${{ steps.meta.outputs.labels }}

@@ -295,9 +295,14 @@ Please refer to [Contributing](https://github.com/project-koku/koku/blob/main/CO
 
 ---
 ## Build and Push Docker Images
-### **Github**
+### **Build and Push to Quay.io**
 Following are secrets needed to set your CI/CD pipeline
 1. CODECOV_TOKEN
 2. QUAY_PASSWORD
 3. QUAY_USERNAME
     - From quay.io -> Account Settings -> Generated encrypted password
+### **Build and Push on Github**
+Run this command to trigger release workflow. For installation of **gh** cli follow this <a href="https://github.com/cli/cli?tab=readme-ov-file#installation" target="_blank">doc</a>
+```bash
+gh release create v0.0.1 --notes "Initial release of koku"
+```
