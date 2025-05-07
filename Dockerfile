@@ -57,6 +57,7 @@ WORKDIR ${APP_ROOT}
 # install dependencies
 COPY Pipfile .
 COPY Pipfile.lock .
+COPY run_server.sh .
 RUN \
     # install the dependencies into the working dir (i.e. ${APP_ROOT}/.venv)
     pipenv install --deploy && \
@@ -103,4 +104,4 @@ ARG GIT_COMMIT=undefined
 ENV GIT_COMMIT=${GIT_COMMIT}
 
 # Set the default CMD.
-CMD ["./scripts/entrypoint.sh"]
+CMD ["/opt/koku/scripts/entrypoint.sh"]
