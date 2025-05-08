@@ -59,8 +59,9 @@ COPY Pipfile .
 COPY Pipfile.lock .
 COPY run_server.sh .
 RUN \
+    pipenv lock --clear && \
     # install the dependencies into the working dir (i.e. ${APP_ROOT}/.venv)
-    pipenv install --deploy && \
+    pipenv install --dev && \
     # delete the pipenv cache
     pipenv --clear
 
