@@ -59,6 +59,7 @@ COPY Pipfile .
 COPY Pipfile.lock .
 COPY run_server.sh .
 RUN \
+    # clear Pipfile.lock
     pipenv lock --clear && \
     # install the dependencies into the working dir (i.e. ${APP_ROOT}/.venv)
     pipenv install --dev && \
