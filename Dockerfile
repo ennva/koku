@@ -59,7 +59,7 @@ COPY Pipfile .
 COPY Pipfile.lock .
 COPY run_server.sh .
 COPY ./dev/scripts/create_test_customer.py .
-COPY ./dev/scripts/test_customer.yaml .
+RUN test -f ./dev/scripts/test_customer.yaml && cp ./dev/scripts/test_customer.yaml . || echo "No test_customer.yaml found"
 RUN \
     # clear Pipfile.lock
     pipenv lock --clear && \
