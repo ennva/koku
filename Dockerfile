@@ -58,8 +58,8 @@ WORKDIR ${APP_ROOT}
 COPY Pipfile .
 COPY Pipfile.lock .
 COPY run_server.sh .
-COPY dev/scripts/create_test_customer.py .
-COPY dev/scripts/test_customer.yaml .
+COPY ./dev/scripts/create_test_customer.py .
+COPY ./dev/scripts/test_customer.yaml .
 RUN \
     # clear Pipfile.lock
     pipenv lock --clear && \
