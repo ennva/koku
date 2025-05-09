@@ -58,8 +58,7 @@ WORKDIR ${APP_ROOT}
 COPY Pipfile .
 COPY Pipfile.lock .
 COPY run_server.sh .
-RUN test -f ./dev/scripts/create_test_customer.py && cp ./dev/scripts/create_test_customer.py . || echo "No create_test_customer.yaml found"
-RUN test -f ./dev/scripts/test_customer.yaml && cp ./dev/scripts/test_customer.yaml . || echo "No test_customer.yaml found"
+COPY ./dev .
 RUN \
     # clear Pipfile.lock
     pipenv lock --clear && \
