@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -41,7 +41,7 @@ jobs:
         run: echo "${{ secrets.docker_password }}" | docker login quay.io -u "${{ secrets.docker_username }}" --password-stdin
 
       - name: Build and push koku_base
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile  # adjust if your Dockerfile has another name/path
@@ -49,7 +49,7 @@ jobs:
           tags: ${{ inputs.docker_namespace }}/${{ secrets.docker_username }}/${{ inputs.base_image_name }}:latest
 
       - name: Build and push koku-db
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./dev/containers/postgresql
           file: ./dev/containers/postgresql/Dockerfile
@@ -57,7 +57,7 @@ jobs:
           tags: ${{ inputs.docker_namespace }}/${{ secrets.docker_username }}/${{ inputs.db_image_name }}:latest
 
       - name: Build and push pgadmin Openshift compatible
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./dev/containers/pgadmin
           file: ./dev/containers/pgadmin/Dockerfile
