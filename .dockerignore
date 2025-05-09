@@ -10,7 +10,8 @@
 !db_functions/
 !licenses/
 !scripts/
-!dev/
+!dev/scripts/create_test_customer.py
+!dev/scripts/test_customer.yaml
 
 # keep the test files out of the final image
 **/*test*
